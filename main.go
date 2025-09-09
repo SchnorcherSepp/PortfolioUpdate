@@ -8,7 +8,7 @@ import (
 func main() {
 
 	// read Portfolio Performance export
-	obj, err := loadJSON("Regionen_(MSCI)_(ex.A).json")
+	obj, err := loadJSON("Regionen_(MSCI).json")
 	if err != nil {
 		panic(err)
 	}
@@ -34,6 +34,7 @@ func main() {
 
 			// new data
 			newWeight, ok := cw[country]
+			cw[country] = "OK" // mark as used
 			newWeightF, _ := strconv.ParseFloat(newWeight, 64)
 			obj.Instruments[ii].Categories[ci].Weight = newWeightF // set data
 
@@ -41,18 +42,31 @@ func main() {
 			if !ok {
 				fmt.Printf("err: Country from Portfolio Performance not included in the Finanzfluss dataset: %s = %.2f\n", country, weight)
 			} else {
-				fmt.Printf("%s: %.2f -> %s\n", country, weight, newWeight)
+				weightS := fmt.Sprintf("%.2f", weight)
+				if weightS == newWeight {
+					fmt.Printf("= %s: %s\n", country, weightS)
+				} else {
+					fmt.Printf("+ %s: %s -> %s  !!!\n", country, weightS, newWeight)
+				}
 			}
 		}
+
+		// find unused countries
+		for k, v := range cw {
+			if v != "OK" {
+				fmt.Printf("unused country: %s\n", k)
+			}
+		}
+
 		fmt.Println("------------------")
 	}
 
 	//-----------------------------------------------------------
 
 	// write new import file
-	err = writeJSON("Regionen_(MSCI)_(ex.A)-2.json", obj)
+	err = writeJSON("new.json", obj)
 	if err != nil {
 		panic(err)
 	}
-	
+
 }

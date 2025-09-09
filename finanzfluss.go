@@ -137,6 +137,9 @@ func countryWeighting(text string) map[string]string {
 		if key == "Vereinigtes Königreich" {
 			key = "Großbritannien"
 		}
+		if key == "Tschechien" {
+			key = "Tschechische Republik"
+		}
 
 		//fmt.Printf("%s: %f\n", key, val)  // DEBUG !!!!
 		ret[key] = value
